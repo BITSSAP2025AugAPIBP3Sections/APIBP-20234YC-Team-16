@@ -1,0 +1,5 @@
+[
+  { "id": "court1", "name": "Court 1", "pricePerHour": 400 },
+  { "id": "court2", "name": "Court 2", "pricePerHour": 500 },
+  { "id": "court3", "name": "Court 3", "pricePerHour": 600 }
+]
