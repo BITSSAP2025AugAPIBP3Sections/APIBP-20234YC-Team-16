@@ -1,0 +1,50 @@
+[
+  {
+    "id": "1764406891502",
+    "userId": "1764406535062",
+    "courtId": "court1",
+    "courtName": "Court 1",
+    "date": "2025-01-01",
+    "slot": "06:00-07:00",
+    "players": [
+      {
+        "name": "Yuvi",
+        "email": "yuvi@example.com"
+      },
+      {
+        "name": "John",
+        "email": "john@example.com"
+      }
+    ],
+    "totalCost": 400,
+    "costPerPlayer": 200
+  },
+  {
+    "id": "1764407403876",
+    "userId": "1764406535062",
+    "courtId": "court2",
+    "courtName": "Court 2",
+    "date": "2025-11-29",
+    "slot": "09:00-10:00",
+    "players": [
+      {
+        "name": "yuvaraj",
+        "email": "yt@gm.c"
+      },
+      {
+        "name": "shivam",
+        "email": "shivam@g.c"
+      },
+      {
+        "name": "megha",
+        "email": "megha@123.c"
+      },
+      {
+        "name": "ganga",
+        "email": "1234@gm.co"
+      }
+    ],
+    "totalCost": 500,
+    "costPerPlayer": 125
+  }
+]
