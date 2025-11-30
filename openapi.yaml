@@ -1,0 +1,233 @@
+openapi: 3.0.3
+info:
+  title: Badminton Court Booking API
+  description: API for discovering badminton courts and checking real-time slot availability
+  version: 1.1.0
+  contact:
+    name: API Support
+    email: support@badmintonbooker.app
+
+servers:
+  - url: https://api.badmintonbooker.app/v1
+    description: Production
+  - url: http://localhost:3000/api
+    description: Local development
+
+# ========================================
+# OAuth2.0 + OpenID Connect Security
+# ========================================
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.badmintonbooker.app/oauth/authorize
+          tokenUrl: https://auth.badmintonbooker.app/oauth/token
+          scopes:
+            openid: OpenID Connect scope
+            profile: Access user profile
+            email: Access user email
+            read:courts: Read court information and availability
+            bookings:manage: Create and cancel your bookings
+      description: |
+        OAuth 2.0 with Authorization Code Flow (PKCE recommended for mobile/SPA)
+
+    # Optional: Also support Bearer token directly (for testing or server-to-server)
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Court:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          example: court-1
+        name:
+          type: string
+          example: Smash Arena Koramangala
+        address:
+          type: string
+        location:
+          type: object
+          properties:
+            lat: { type: number, format: float }
+            lng: { type: number, format: float }
+        pricePerHour:
+          type: integer
+          example: 650
+        rating:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 5
+        amenities:
+          type: array
+          items: { type: string }
+          example: ["shower", "parking", "wooden-floor"]
+
+    SlotsResponse:
+      type: object
+      properties:
+        slots:
+          type: array
+          items:
+            type: string
+            enum:
+              - "06:00-07:00"
+              - "07:00-08:00"
+              - "08:00-09:00"
+              - "09:00-10:00"
+              - "17:00-18:00"
+              - "18:00-19:00"
+              - "19:00-20:00"
+              - "20:00-21:00"
+
+    TodaySlotsResponse:
+      type: object
+      properties:
+        courtId:
+          type: string
+        date:
+          type: string
+          format: date
+        message:
+          type: string
+        availableSlots:
+          type: array
+          items:
+            type: string
+            enum:
+              - "06:00-07:00"
+              - "07:00-08:00"
+              - "08:00-09:00"
+              - "09:00-10:00"
+              - "17:00-18:00"
+              - "18:00-19:00"
+              - "19:00-20:00"
+              - "20:00-21:00"
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+  responses:
+    Unauthorized:
+      description: Access token is missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example: { error: "Unauthorized" }
+
+    BadRequest:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example: { error: "Court not found" }
+
+# ========================================
+# Paths
+# ========================================
+paths:
+  /courts:
+    get:
+      summary: Get all courts
+      description: Returns list of all available badminton courts
+      tags: [Courts]
+      security:
+        - oauth2: [read:courts]
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Court'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /courts/{id}/slots:
+    get:
+      summary: Get available slots for a court on a specific date
+      tags: [Courts]
+      security:
+        - oauth2: [read:courts]
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+          example: court-1
+        - in: query
+          name: date
+          required: true
+          schema:
+            type: string
+            format: date
+            pattern: '^\d{4}-\d{2}-\d{2}$'
+          example: '2025-12-01'
+      responses:
+        '200':
+          description: Available time slots
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SlotsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /courts/{id}/today:
+    get:
+      summary: Get available slots for a court TODAY
+      description: Quick check – no date parameter needed
+      tags: [Courts]
+      security:
+        - oauth2: [read:courts]
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+          example: court-1
+      responses:
+        '200':
+          description: Today's availability
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodaySlotsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+# Global security (applies to all endpoints unless overridden)
+security:
+  - oauth2: [read:courts]
+  - bearerAuth: []
