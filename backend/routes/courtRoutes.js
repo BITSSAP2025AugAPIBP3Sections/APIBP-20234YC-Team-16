@@ -93,3 +93,50 @@ router.get("/:id/slots", authMiddleware, (req, res) => {
 });
 
 module.exports = router;
+/**
+ * @swagger
+ * /api/courts/{id}/today:
+ *   get:
+ *     summary: Get available slots for a court TODAY
+ *     tags: [Courts]
+ *     security: [{ bearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *         example: court-1
+ *     responses:
+ *       200:
+ *         description: Available slots today
+ */
+router.get("/:id/today", authMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+
+    const courts = await readJSON("courts.json");
+    if (!courts.some(c => c.id === id)) {
+      return res.status(404).json({ error: "Court not found" });
+    }
+
+    const bookings = await readJSON("bookings.json");
+    const bookedToday = bookings
+      .filter(b => b.courtId === id && b.date === today)
+      .map(b => b.slot);
+
+    const availableToday = ALL_SLOTS.filter(slot => !bookedToday.includes(slot));
+
+    res.json({
+      courtId: id,
+      date: today,
+      message: availableToday.length > 0 
+        ? `${availableToday.length} slots available today!` 
+        : "No slots available today",
+      availableSlots: availableToday
+    });
+
+  } catch (err) {
+    res.status(500).json({ error: "Failed to check today's slots" });
+  }
+});
