@@ -197,6 +197,7 @@ const BookingPage = () => {
                   <input
                     type="text"
                     placeholder="Name"
+                    name="name"
                     value={player.name}
                     onChange={(e) =>
                       handlePlayerChange(index, "name", e.target.value)
@@ -206,6 +207,7 @@ const BookingPage = () => {
                   <input
                     type="email"
                     placeholder="Email"
+                    name="email"
                     value={player.email}
                     onChange={(e) =>
                       handlePlayerChange(index, "email", e.target.value)

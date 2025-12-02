@@ -61,6 +61,7 @@ const LoginPage = () => {
               <input
                 type="text"
                 value={name}
+                name="name"
                 onChange={(e) => setName(e.target.value)}
                 required
                 className="form-input"
@@ -74,6 +75,7 @@ const LoginPage = () => {
             <input
               type="email"
               value={email}
+              name="email"
               onChange={(e) => setEmail(e.target.value)}
               required
               className="form-input"
@@ -86,6 +88,7 @@ const LoginPage = () => {
             <input
               type="password"
               value={password}
+              name="password"
               onChange={(e) => setPassword(e.target.value)}
               required
               className="form-input"
