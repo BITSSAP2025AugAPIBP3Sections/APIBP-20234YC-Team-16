@@ -1,21 +1,13 @@
 {
-  "name": "tests",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test:wdio": "wdio run ./wdio.conf.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
-    "chai": "^4.3.7",
-    "mocha": "^11.7.5",
-    "selenium-webdriver": "^4.38.0"
-  },
-  "type": "module",
-  "dependencies": {
-    "chromedriver": "^120.0.2"
+    "@wdio/cli": "^8.x",
+    "@wdio/local-runner": "^8.x",
+    "@wdio/mocha-framework": "^8.x",
+    "@wdio/devtools-service": "^8.x",
+    "@wdio/spec-reporter": "^8.x",
+    "expect-webdriverio": "^2.x"
   }
 }
