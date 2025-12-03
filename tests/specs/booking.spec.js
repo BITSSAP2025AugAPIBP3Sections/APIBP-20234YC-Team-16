@@ -4,7 +4,7 @@ describe('BOOKING FLOW', () => {
     // quick login with existing test account (or reuse token)
     const email = await $("[name='email'], #email");
     const pass = await $("[name='password'], #password");
-    await email.setValue('yuvi@test.com');
+    await email.setValue('krish@gm.c');
     await pass.setValue('123456');
     await $("button[type='submit']").click();
     await browser.waitUntil(async () => (await browser.getUrl()).includes('/book'), { timeout: 10000 });
